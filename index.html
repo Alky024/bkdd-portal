@@ -1,0 +1,2467 @@
+﻿<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BKDD Kabupaten Sorong | Portal Satu Pintu</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * { font-family: 'Outfit', sans-serif; }
+    html { scroll-behavior: smooth; }
+
+    /* Portal Background Styles */
+    body.portal-bg {
+      background: radial-gradient(circle at top left, rgba(59,130,246,.12), transparent 30%),
+                  radial-gradient(circle at bottom right, rgba(14,165,233,.10), transparent 25%),
+                  #f8fafc;
+      transition: background 0.5s ease, color 0.3s ease;
+    }
+    html.dark body.portal-bg {
+      background: radial-gradient(circle at top left, rgba(30,58,138,.15), transparent 35%),
+                  radial-gradient(circle at bottom right, rgba(15,118,110,.10), transparent 30%),
+                  #020617;
+    }
+    .glass { backdrop-filter: blur(12px); background: rgba(255,255,255,.75); }
+    html.dark .glass { background: rgba(15,23,42,.75); border: 1px solid rgba(255,255,255,0.05); }
+    
+    .card-hover { transition: all .35s cubic-bezier(0.4, 0, 0.2, 1); }
+    .card-hover:hover { transform: translateY(-8px); }
+    
+    .hero-bg {
+      background-size: cover; background-position: center;
+      transition: background-image 0.5s ease;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(to right, #60a5fa, #38bdf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    html.dark body { background: #020617; color: white; }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    html.dark ::-webkit-scrollbar-thumb { background: #475569; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    
+    .modal-enter { animation: fadeIn 0.3s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    
+    .toast-enter { animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    .toast-exit { animation: slideOut 0.3s ease-in forwards; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+    /* Form Input Style Admin */
+    .admin-input {
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background-color: #f8fafc;
+      outline: none;
+      transition: all 0.2s;
+      font-weight: 500;
+      color: #1e293b;
+    }
+    html.dark .admin-input {
+      background-color: #1e293b;
+      border-color: #334155;
+      color: #ffffff;
+    }
+    .admin-input:focus {
+      background-color: #ffffff;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    html.dark .admin-input:focus {
+      background-color: #0f172a;
+    }
+    
+    /* Tab Button States */
+    .tab-btn-active { background-color: #0f172a; color: #ffffff; font-weight: 700; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    html.dark .tab-btn-active { background-color: #ffffff; color: #0f172a; }
+    .tab-btn-inactive { background-color: #ffffff; color: #475569; font-weight: 600; border: 1px solid #e2e8f0; }
+    html.dark .tab-btn-inactive { background-color: #1e293b; color: #94a3b8; border-color: #334155; }
+    .tab-btn-inactive:hover { background-color: #f1f5f9; }
+    html.dark .tab-btn-inactive:hover { background-color: #334155; }
+    
+    /* Content Styling */
+    .prose-content p { margin-bottom: 1rem; line-height: 1.7; }
+    .prose-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+    .prose-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
+    
+    .admin-tab-btn-active { background-color: rgba(30, 41, 59, 0.6); color: #60a5fa; }
+    
+    /* Hide Scrollbar */
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="portal-bg text-slate-800 transition-colors duration-300">
+
+  <!-- LOADING OVERLAY -->
+  <div id="loading-overlay" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[300] flex flex-col items-center justify-center text-white transition-opacity duration-500">
+    <i class="fa-solid fa-circle-notch fa-spin text-6xl mb-5 text-blue-500 shadow-blue-500/50"></i>
+    <p class="font-bold text-xl tracking-wide">Memuat Sistem...</p>
+    <p class="text-slate-400 text-sm mt-2">Menyiapkan antarmuka portal</p>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast-container" class="fixed top-5 right-5 z-[400] flex flex-col gap-3 pointer-events-none"></div>
+
+  <!-- LOGIN MODAL (SECURE ENTRY) -->
+  <div id="login-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[250] hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden modal-enter p-8 relative">
+      <button onclick="closeModal('login-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-500 flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+          <i class="fa-solid fa-user-shield"></i>
+        </div>
+        <h3 class="text-2xl font-black text-slate-900 dark:text-white">Otorisasi Admin</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">Masukkan kredensial panel.</p>
+      </div>
+      <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Username</label>
+          <input type="text" id="login-username" class="admin-input" placeholder="Masukkan username" required>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Password</label>
+          <input type="password" id="login-password" class="admin-input" placeholder="Masukkan password" required>
+        </div>
+        <button type="submit" class="w-full py-3 mt-2 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">Login Dashboard</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONFIRM MODAL -->
+  <div id="confirm-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[300] hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden modal-enter p-6">
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-500/10 text-red-500 flex items-center justify-center mx-auto mb-4 text-xl">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white" id="confirm-title">Konfirmasi</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-2" id="confirm-message">Apakah Anda yakin?</p>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="closeModal('confirm-modal')" class="w-full py-2.5 rounded-xl font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Batal</button>
+        <button id="confirm-yes-btn" class="w-full py-2.5 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 transition shadow-lg shadow-red-500/20">Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL PIC KABID (PUBLIC) -->
+  <div id="pic-modal-view" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[150] hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden modal-enter flex flex-col max-h-[80vh]">
+      <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10">
+        <div>
+          <h3 class="font-black text-xl text-slate-800 dark:text-white"><i class="fa-solid fa-address-book text-blue-500 mr-2"></i> Kontak PIC Bidang</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pusat Bantuan Layanan Kepegawaian</p>
+        </div>
+        <button onclick="closeModal('pic-modal-view')" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="p-6 overflow-y-auto space-y-4" id="pic-list-container">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- READ NEWS MODAL (PUBLIC) -->
+  <div id="news-modal-view" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[150] hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden modal-enter flex flex-col max-h-[90vh]">
+      <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-end bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10">
+        <button onclick="closeModal('news-modal-view')" class="w-10 h-10 flex items-center justify-center rounded-full bg-black/50 text-white hover:bg-red-600 transition backdrop-blur-sm shadow-lg"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="overflow-y-auto" id="news-detail-container">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM MODAL ADMIN -->
+  <div id="admin-form-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[250] hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden modal-enter flex flex-col max-h-[90vh]">
+      <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center sticky top-0 z-10 bg-white dark:bg-slate-900">
+        <h3 class="font-black text-xl text-slate-800 dark:text-white" id="admin-form-title">Form Data</h3>
+        <button onclick="closeModal('admin-form-modal')" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="p-6 overflow-y-auto flex-1">
+        <form id="admin-form-body" onsubmit="handleAdminFormSubmit(event)" class="space-y-4">
+          <!-- Dynamic Content -->
+        </form>
+      </div>
+      <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3">
+        <button onclick="closeModal('admin-form-modal')" type="button" class="px-6 py-2.5 rounded-xl font-bold text-slate-600 dark:text-slate-300 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition">Batal</button>
+        <button type="submit" form="admin-form-body" class="px-6 py-2.5 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">Simpan Data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+        VIEW: PORTAL UTAMA (PUBLIK)
+  =========================================== -->
+  <div id="portal-view" class="block transition-all duration-500">
+    
+    <!-- NAVBAR -->
+    <nav class="glass sticky top-0 z-40 border-b border-white/20 dark:border-slate-800 px-6 lg:px-12 py-4 shadow-sm transition-all duration-300">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="window.scrollTo(0,0)">
+          <!-- Logo -->
+          <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center p-1 shadow-lg shadow-blue-500/20 overflow-hidden shrink-0 border border-slate-200 dark:border-slate-800">
+            <img id="portal-nav-logo-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Lambang_Kabupaten_Sorong.png/422px-Lambang_Kabupaten_Sorong.png" alt="Logo" class="h-full w-auto object-contain">
+          </div>
+          <div>
+            <div class="font-black text-xl tracking-tight dark:text-white" id="portal-nav-title">BKDD Kab. Sorong</div>
+            <div class="text-[10px] sm:text-xs font-bold text-blue-600 dark:text-blue-400 tracking-wider uppercase">Portal Layanan Terpadu</div>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-2 lg:gap-6">
+          <button onclick="toggleDarkMode()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition flex items-center justify-center shadow-sm">
+            <i class="fa-solid fa-moon text-lg" id="theme-icon"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section id="portal-hero-section" class="hero-bg text-white relative overflow-hidden bg-slate-900" style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1469&auto=format&fit=crop');">
+      <div class="absolute inset-0 bg-slate-900/80 mix-blend-multiply"></div>
+      <div class="max-w-7xl mx-auto px-6 lg:px-12 py-24 lg:py-32 relative z-10">
+        <div class="max-w-3xl">
+          <div class="inline-flex items-center gap-3 bg-white/10 border border-white/10 rounded-full px-5 py-2 text-sm mb-8 backdrop-blur-md shadow-lg">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="font-medium tracking-wide text-xs sm:text-sm" id="portal-hero-badge">Layanan Kepegawaian Digital Terpadu</span>
+          </div>
+          <h1 class="text-5xl lg:text-7xl font-black leading-tight mb-6">
+            <span id="portal-hero-title1">Smart</span> <span class="gradient-text" id="portal-hero-title-grad">ASN</span> <span id="portal-hero-title2">Portal</span>
+          </h1>
+          <p id="portal-hero-desc" class="text-lg text-slate-200 leading-relaxed max-w-2xl mb-10 font-light">Akses cepat dan mudah ke seluruh sistem informasi dan layanan administrasi kepegawaian di lingkungan Pemerintah Kabupaten Sorong.</p>
+          <div class="flex flex-wrap gap-4">
+            <button onclick="document.getElementById('layanan').scrollIntoView({behavior: 'smooth'})" class="bg-blue-600 hover:bg-blue-500 px-6 sm:px-8 py-3.5 rounded-xl font-bold shadow-xl shadow-blue-500/30 transition flex items-center gap-2">
+              <i class="fa-solid fa-rocket text-lg"></i> Jelajahi Layanan
+            </button>
+            <button onclick="document.getElementById('berita').scrollIntoView({behavior: 'smooth'})" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 px-6 sm:px-8 py-3.5 rounded-xl font-bold transition flex items-center gap-2">
+              <i class="fa-solid fa-newspaper text-lg"></i> Berita & Info
+            </button>
+            <button onclick="openModal('pic-modal-view')" class="bg-white/10 border border-white/20 hover:bg-white/20 px-6 sm:px-8 py-3.5 rounded-xl font-bold backdrop-blur-lg transition flex items-center gap-2">
+              <i class="fa-solid fa-headset text-lg text-emerald-400"></i> Kontak PIC
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Curve bottom -->
+      <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-10">
+        <svg class="relative block w-full h-[50px] sm:h-[80px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,121.22,198.71,115.82c67.88-5.4,135.8-19.68,199.19-38.38Z" fill="currentColor" class="text-[#f8fafc] dark:text-[#020617] transition-colors duration-300"></path>
+        </svg>
+      </div>
+    </section>
+
+    <!-- STATS (GRID-COLS-2 SESUAI REQUEST) -->
+    <section class="relative z-20 px-6 lg:px-12 -mt-8 sm:-mt-16 pb-16">
+      <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+        <div class="glass rounded-2xl p-5 lg:p-8 shadow-xl border border-slate-100 dark:border-slate-800 text-center transition-all hover:scale-105">
+          <div class="text-3xl lg:text-4xl font-black text-blue-600 dark:text-blue-400" id="portal-stat-1">3,482</div>
+          <div class="text-slate-500 dark:text-slate-400 mt-1 lg:mt-2 font-bold text-[10px] sm:text-xs lg:text-sm uppercase tracking-wider">Total Pegawai / ASN</div>
+        </div>
+        <div class="glass rounded-2xl p-5 lg:p-8 shadow-xl border border-slate-100 dark:border-slate-800 text-center transition-all hover:scale-105">
+          <div class="text-3xl lg:text-4xl font-black text-emerald-600 dark:text-emerald-400" id="portal-stat-2">0</div>
+          <div class="text-slate-500 dark:text-slate-400 mt-1 lg:mt-2 font-bold text-[10px] sm:text-xs lg:text-sm uppercase tracking-wider">Aplikasi Aktif</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFIL PIMPINAN -->
+    <section id="pimpinan" class="max-w-7xl mx-auto px-6 lg:px-12 py-10 lg:py-16">
+      <div class="mb-10 text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-bold mb-3">
+          <i class="fa-solid fa-users-viewfinder"></i> <span id="portal-pimpinan-badge">PROFIL PIMPINAN</span>
+        </div>
+        <h2 class="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white transition" id="portal-pimpinan-title">Struktur Pimpinan BKDD</h2>
+      </div>
+      <div id="portal-leaders-list" class="flex flex-wrap justify-center gap-8">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- SEARCH -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-12 pt-4">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-3 sm:p-4 shadow-lg border border-slate-200 dark:border-slate-800 transition focus-within:ring-2 focus-within:ring-blue-500 flex items-center gap-3 relative">
+        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 shrink-0">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <input type="text" id="searchInput" placeholder="Cari layanan aplikasi (contoh: Kinerja, Mutasi)..." class="w-full outline-none text-base sm:text-lg bg-transparent dark:text-white placeholder-slate-400 font-medium" onkeyup="renderPortalServices()"/>
+      </div>
+    </section>
+
+    <!-- LAYANAN -->
+    <section id="layanan" class="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-16 min-h-[400px]">
+      <div class="mb-10 text-center md:text-left">
+        <h2 class="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white mb-3 transition" id="portal-layanan-title">Smart Digital Services</h2>
+        <p class="text-slate-500 dark:text-slate-400 text-base sm:text-lg" id="portal-layanan-desc">Seluruh layanan kepegawaian Kabupaten Sorong dalam satu portal terintegrasi.</p>
+      </div>
+      
+      <div id="portal-empty-state" class="hidden text-center py-20">
+        <div class="inline-flex w-24 h-24 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-full items-center justify-center text-4xl mb-6">
+          <i class="fa-solid fa-folder-open"></i>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Layanan Tidak Ditemukan</h3>
+        <p class="text-slate-500 dark:text-slate-400">Coba gunakan kata kunci pencarian yang lain.</p>
+      </div>
+
+      <div id="portal-menu-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- SECTION: BERITA (NEWS) -->
+    <section id="berita" class="bg-blue-50/50 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 py-16 lg:py-20 px-6 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <div class="mb-10 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="text-center md:text-left">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-bold mb-3">
+              <i class="fa-regular fa-newspaper"></i> <span id="portal-berita-badge">UPDATE INFORMASI</span>
+            </div>
+            <h2 class="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white transition" id="portal-berita-title">Berita & Pengumuman</h2>
+          </div>
+        </div>
+
+        <div id="portal-news-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Rendered via JS -->
+        </div>
+        <div id="portal-news-empty" class="hidden text-center py-12">
+          <p class="text-slate-500 dark:text-slate-400">Belum ada berita atau pengumuman saat ini.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: MAKLUMAT PELAYANAN -->
+    <section id="maklumat" class="bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 py-16 lg:py-20 px-6 lg:px-12">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-bold mb-3">
+            <i class="fa-solid fa-handshake"></i> <span id="portal-maklumat-badge">KOMITMEN KAMI</span>
+          </div>
+          <h2 class="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white transition" id="portal-maklumat-title">Maklumat Pelayanan</h2>
+        </div>
+        <div class="bg-amber-50 dark:bg-slate-800/50 rounded-3xl p-8 lg:p-12 border border-amber-100 dark:border-slate-700 shadow-xl shadow-amber-500/5 text-center relative overflow-hidden">
+          <!-- Decorative quote marks -->
+          <i class="fa-solid fa-quote-left absolute top-8 left-8 text-4xl text-amber-500/20 dark:text-amber-500/10"></i>
+          <i class="fa-solid fa-quote-right absolute bottom-8 right-8 text-4xl text-amber-500/20 dark:text-amber-500/10"></i>
+          
+          <div id="portal-maklumat-content" class="text-lg lg:text-2xl font-medium text-slate-800 dark:text-slate-200 leading-relaxed max-w-4xl mx-auto relative z-10 italic">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: SOP (UPGRADED INTERACTIVE DESIGN) -->
+    <section id="sop" class="bg-blue-50/50 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 py-16 lg:py-20 px-6 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        
+        <!-- Header & Toggle Button -->
+        <div class="mb-10 text-center md:text-left flex flex-col md:flex-row justify-between items-center md:items-end gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-bold mb-3">
+              <i class="fa-solid fa-book-bookmark"></i> <span id="portal-sop-badge">STANDAR OPERASIONAL</span>
+            </div>
+            <h2 class="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white transition" id="portal-sop-title">Prosedur Layanan (SOP)</h2>
+          </div>
+          
+          <button onclick="toggleSOPVisibility()" id="btn-toggle-sop" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-3.5 rounded-xl font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30 card-hover">
+            <span>Lihat Daftar SOP</span> <i id="icon-toggle-sop" class="fa-solid fa-chevron-down transition-transform duration-300"></i>
+          </button>
+        </div>
+
+        <!-- Hidden Content Container -->
+        <div id="sop-content-container" class="hidden transition-all duration-500 opacity-0 transform translate-y-4">
+          <!-- Filter Controls & Search bar -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div class="flex flex-wrap gap-2" id="sop-category-filters">
+              <button onclick="filterSOP('Semua')" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-blue-600 text-white" id="filter-sop-all">Semua SOP</button>
+              <button onclick="filterSOP('Mutasi')" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100" id="filter-sop-mutasi">Mutasi & Promosi</button>
+              <button onclick="filterSOP('Kesejahteraan')" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100" id="filter-sop-kesra">Kesejahteraan Pegawai</button>
+              <button onclick="filterSOP('Pendidikan & Latihan')" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100" id="filter-sop-diklat">Pendidikan & Latihan</button>
+              <button onclick="filterSOP('Disiplin & Kinerja')" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100" id="filter-sop-disiplin">Disiplin & Kinerja</button>
+            </div>
+            
+            <div class="relative max-w-xs w-full">
+              <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input type="text" id="search-sop" onkeyup="renderPortalSOP()" placeholder="Cari SOP..." class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-blue-500 dark:text-white shadow-sm">
+            </div>
+          </div>
+
+          <!-- SOP Card Deck Grid -->
+          <div id="portal-sop-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION: PERSYARATAN LAYANAN BKDD -->
+    <section id="persyaratan" class="bg-slate-50 dark:bg-slate-900/40 border-t border-b border-slate-100 dark:border-slate-800 py-16 lg:py-20 px-6 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <div class="mb-12 text-center md:text-left">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-bold mb-3">
+            <i class="fa-solid fa-file-shield"></i> <span id="portal-req-badge">PANDUAN ADMINISTRASI</span>
+          </div>
+          <h2 class="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white mb-3 transition" id="portal-req-title">Persyaratan Layanan</h2>
+          <p class="text-slate-500 dark:text-slate-400 text-base sm:text-lg" id="portal-req-desc">Persiapkan berkas kelengkapan Anda sesuai standar pelayanan.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+          <div class="lg:col-span-4 space-y-2 lg:max-h-[500px] overflow-y-auto pr-2 flex lg:flex-col overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 hide-scrollbar" id="req-tabs-list">
+            <!-- Rendered via JS -->
+          </div>
+
+          <div class="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 lg:p-8 shadow-xl relative min-h-[300px]">
+            <h3 id="req-detail-title" class="text-2xl font-bold text-slate-800 dark:text-white mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">Pilih Layanan</h3>
+            <div id="req-detail-content" class="prose-content text-slate-600 dark:text-slate-300">
+              <p class="text-center text-slate-400 mt-10">Silakan pilih jenis layanan di menu samping untuk melihat persyaratan.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER PORTAL -->
+    <footer id="kontak" class="bg-slate-950 text-slate-300 border-t border-slate-900">
+      <div class="max-w-7xl mx-auto px-8 lg:px-12 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12 xl:gap-16">
+          <div class="space-y-6">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center p-1 shadow-lg overflow-hidden shrink-0">
+                <img id="portal-footer-logo-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Lambang_Kabupaten_Sorong.png/422px-Lambang_Kabupaten_Sorong.png" alt="Logo" class="h-full w-auto object-contain">
+              </div>
+              <div>
+                <div class="font-black text-lg text-white" id="portal-footer-title">BKDD Kab. Sorong</div>
+                <div class="text-blue-400 text-[10px] font-bold tracking-wider" id="portal-footer-subtitle">PORTAL LAYANAN TERPADU</div>
+              </div>
+            </div>
+            <p class="text-sm leading-relaxed text-slate-400" id="portal-footer-desc">
+              Portal layanan kepegawaian terintegrasi untuk memberikan kemudahan, kecepatan, dan transparansi pelayanan bagi seluruh Aparatur Sipil Negara di Lingkungan Pemerintah Kabupaten Sorong.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="font-bold text-white text-lg mb-6 flex items-center gap-2"><i class="fa-solid fa-location-dot text-blue-500"></i> Hubungi Kami</h4>
+            <ul class="space-y-4 text-sm">
+              <li class="flex items-start gap-3">
+                <i class="fa-solid fa-map text-slate-500 mt-1"></i>
+                <span id="portal-contact-address">Jl. Sorong - Klamono Km. 24, Aimas, Kabupaten Sorong, Papua Barat Daya 98451</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i class="fa-solid fa-phone text-slate-500"></i>
+                <span id="portal-contact-phone">+62 951 322331</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i class="fa-solid fa-envelope text-slate-500"></i>
+                <span id="portal-contact-email">info@bkdd.sorongkab.go.id</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i class="fa-solid fa-globe text-slate-500"></i>
+                <span id="portal-contact-web">bkdd.sorongkab.go.id</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- SOSIAL MEDIA COLUMN -->
+          <div>
+            <h4 class="font-bold text-white text-lg mb-6 flex items-center gap-2"><i class="fa-solid fa-circle-nodes text-blue-500"></i> Media Sosial Resmi</h4>
+            <p class="text-sm text-slate-400 mb-6">Pantau dan ikuti perkembangan informasi kepegawaian BKDD Kabupaten Sorong melalui kanal resmi kami:</p>
+            <div class="flex gap-3">
+              <a id="link-fb" href="https://facebook.com" target="_blank" class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 hover:border-blue-500 hover:text-blue-500 hover:scale-110 flex items-center justify-center transition-all">
+                <i class="fa-brands fa-facebook-f text-lg"></i>
+              </a>
+              <a id="link-ig" href="https://instagram.com" target="_blank" class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 hover:border-pink-500 hover:text-pink-500 hover:scale-110 flex items-center justify-center transition-all">
+                <i class="fa-brands fa-instagram text-lg"></i>
+              </a>
+              <a id="link-yt" href="https://youtube.com" target="_blank" class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 hover:border-red-500 hover:text-red-500 hover:scale-110 flex items-center justify-center transition-all">
+                <i class="fa-brands fa-youtube text-lg"></i>
+              </a>
+              <a id="link-x" href="https://twitter.com" target="_blank" class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 hover:border-white hover:text-white hover:scale-110 flex items-center justify-center transition-all">
+                <i class="fa-brands fa-x-twitter text-lg"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-900 mt-12 pt-8 text-center text-xs text-slate-500">
+          <p class="cursor-pointer hover:text-slate-400 inline-block py-2 select-none" onclick="openModal('login-modal')">
+            &copy; 2026 BKDD Kabupaten Sorong. All Rights Reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==========================================
+        VIEW: ADMIN DASHBOARD (PRIVATE)
+  =========================================== -->
+  <div id="admin-view" class="hidden min-h-screen bg-slate-900 text-slate-100 flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <aside class="w-full md:w-64 bg-slate-950 border-r border-slate-800 flex flex-col shrink-0">
+      <div class="p-6 border-b border-slate-800 flex items-center gap-3">
+        <img id="admin-nav-logo-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Lambang_Kabupaten_Sorong.png/422px-Lambang_Kabupaten_Sorong.png" class="h-10 w-auto" alt="Logo">
+        <div>
+          <div class="font-bold text-sm tracking-tight text-white">BKDD Admin</div>
+          <div class="text-[10px] text-emerald-400 font-semibold tracking-widest uppercase">Console v2.1</div>
+        </div>
+      </div>
+      
+      <nav class="flex-1 p-4 space-y-1">
+        <button onclick="setAdminTab('services')" class="admin-tab-btn flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition font-bold" id="tab-admin-services">
+          <i class="fa-solid fa-cubes text-lg w-5 text-center"></i> Layanan Digital
+        </button>
+        <button onclick="setAdminTab('news')" class="admin-tab-btn flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition font-bold" id="tab-admin-news">
+          <i class="fa-solid fa-newspaper text-lg w-5 text-center"></i> Berita & Info
+        </button>
+        <button onclick="setAdminTab('leaders')" class="admin-tab-btn flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition font-bold" id="tab-admin-leaders">
+          <i class="fa-solid fa-user-tie text-lg w-5 text-center"></i> Jajaran Pimpinan
+        </button>
+        <button onclick="setAdminTab('sops')" class="admin-tab-btn flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition font-bold" id="tab-admin-sops">
+          <i class="fa-solid fa-book text-lg w-5 text-center"></i> Prosedur SOP
+        </button>
+        <button onclick="setAdminTab('requirements')" class="admin-tab-btn flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition font-bold" id="tab-admin-requirements">
+          <i class="fa-solid fa-file-invoice text-lg w-5 text-center"></i> Persyaratan
+        </button>
+        <button onclick="setAdminTab('pic-contacts')" class="admin-tab-btn flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition font-bold" id="tab-admin-pic-contacts">
+          <i class="fa-solid fa-address-book text-lg w-5 text-center"></i> Kontak PIC
+        </button>
+        <button onclick="setAdminTab('users')" class="admin-tab-btn flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition font-bold" id="tab-admin-users">
+          <i class="fa-solid fa-user-gear text-lg w-5 text-center"></i> Manajemen User
+        </button>
+        <button onclick="setAdminTab('settings')" class="admin-tab-btn flex w-full items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition font-bold" id="tab-admin-settings">
+          <i class="fa-solid fa-gears text-lg w-5 text-center"></i> Pengaturan Portal
+        </button>
+      </nav>
+      
+      <div class="p-4 border-t border-slate-800 bg-slate-950/60">
+        <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center font-bold text-white text-xs">AD</div>
+          <div>
+            <div class="text-xs font-bold text-white" id="admin-current-user-name">Administrator</div>
+            <div class="text-[10px] text-slate-500" id="admin-current-user-role">Full Access</div>
+          </div>
+        </div>
+          <button onclick="handleLogout()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-red-600/20 hover:text-red-500 flex items-center justify-center transition">
+            <i class="fa-solid fa-power-off"></i>
+          </button>
+        </div>
+        <button onclick="togglePortalView()" class="w-full mt-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white rounded-lg transition flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-arrow-left"></i> Kembali ke Portal
+        </button>
+      </div>
+    </aside>
+    
+    <!-- Content Area -->
+    <main class="flex-1 p-6 md:p-10 flex flex-col overflow-y-auto">
+      <header class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-slate-800 pb-6 mb-8">
+        <div>
+          <h1 class="text-2xl font-black text-white" id="admin-tab-title">Layanan Digital</h1>
+          <p class="text-xs text-slate-400 mt-1" id="admin-tab-subtitle">Kelola aplikasi yang tampil di portal utama.</p>
+        </div>
+        <button id="admin-add-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-blue-500/20 self-start">
+        </button>
+      </header>
+      
+      <!-- Dynamic Content Holder -->
+      <div class="bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden flex-1 shadow-2xl" id="admin-content-holder">
+        <!-- Rendered via JS -->
+      </div>
+    </main>
+  </div>
+
+  <!-- ==========================================
+        CORE JAVASCRIPT & LOGIC PORTAL
+  =========================================== -->
+  <script>
+    // --- STATE SYSTEM ---
+    let appState = {
+      isLoggedIn: false,
+      currentAdminTab: 'services',
+      currentUserUsername: '',
+      currentUserName: 'Administrator',
+      currentUserRole: 'Full Access',
+      currentRequirementIndex: 0,
+      sopVisible: false,
+      darkMode: false,
+      activeSOPFilter: 'Semua'
+    };
+
+    // --- MOCK INITIAL DATASETS ---
+    const defaultServices = [
+      { id: "1", title: "SIMPEG", desc: "Sistem Informasi Manajemen Kepegawaian terintegrasi Kabupaten Sorong.", url: "https://simpeg.sorongkab.go.id", icon: "fa-users" },
+      { id: "2", title: "E-Kinerja", desc: "Aplikasi penilaian kinerja bulanan dan tahunan bagi seluruh ASN.", url: "https://ekinerja.bkn.go.id", icon: "fa-chart-line" },
+      { id: "3", title: "SIAASN", desc: "Sistem Informasi Aparatur Sipil Negara milik BKN Pusat.", url: "https://siasn.bkn.go.id", icon: "fa-shield-halved" },
+      { id: "4", title: "MyASN BKN", desc: "Layanan Mandiri ASN untuk pemutakhiran data secara online.", url: "https://myasn.bkn.go.id", icon: "fa-user-check" },
+      { id: "5", title: "Layanan Mutasi", desc: "Sistem pengajuan perpindahan tugas mandiri bagi Aparatur Sipil Negara.", url: "#", icon: "fa-arrows-spin" },
+      { id: "6", title: "E-Diklat", desc: "Sistem pendaftaran dan pencatatan pelatihan pengembangan ASN.", url: "#", icon: "fa-graduation-cap" },
+      { id: "7", title: "Kenaikan Pangkat", desc: "Monitoring berkas berkala kenaikan pangkat terintegrasi.", url: "#", icon: "fa-arrow-trend-up" },
+      { id: "8", title: "Layanan Pensiun", desc: "Pengurusan berkas purnabakti ASN secara ringkas dan online.", url: "#", icon: "fa-heart-circle-check" }
+    ];
+
+    const defaultNews = [
+      { id: "1", title: "Pengumuman Hasil Seleksi Administrasi CPNS TA 2026", date: "2026-06-15", content: "BKDD Kabupaten Sorong merilis daftar nama peserta yang lolos tahap seleksi berkas administrasi rekrutmen CPNS Kabupaten Sorong Tahun Anggaran 2026.", author: "Sekretariat BKDD", image: "https://images.unsplash.com/photo-1450133064473-71024230f91b?q=80&w=1470&auto=format&fit=crop" },
+      { id: "2", title: "Sosialisasi Implementasi Regulasi Pengukuran Kinerja", date: "2026-06-10", content: "Penyelarasan sasaran kinerja pegawai (SKP) terbaru sesuai aturan pusat disosialisasikan kepada seluruh Kepala Sub Bagian Kepegawaian Organisasi Perangkat Daerah.", author: "Bidang Pembinaan & Kinerja", image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1470&auto=format&fit=crop" },
+      { id: "3", title: "Pelaksanaan Ujian Dinas & Penyesuaian Ijazah Tahap I", date: "2026-06-02", content: "Ujian dinas diselenggarakan dengan sistem Computer Assisted Test (CAT) mandiri di laboratorium komputer BKDD untuk menjamin keabsahan dan akuntabilitas hasil.", author: "Bidang Mutasi", image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=1470&auto=format&fit=crop" }
+    ];
+
+    const defaultLeaders = [
+      { id: "1", name: "Ananias Kokoroba, S.STP., M.Si.", position: "Kepala Badan", nip: "19780512 200112 1 002", photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1374&auto=format&fit=crop", contact: "+62 811-123-456" },
+      { id: "2", name: "Martha J. Salossa, S.E., M.M.", position: "Sekretaris Badan", nip: "19801123 200501 2 004", photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1376&auto=format&fit=crop", contact: "+62 812-345-678" },
+      { id: "3", name: "Yusak M. Sesa, S.IP.", position: "Kabid Mutasi & Promosi", nip: "19820415 200812 1 001", photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1470&auto=format&fit=crop", contact: "+62 813-987-654" }
+    ];
+
+    const defaultSOPs = [
+      { id: "1", title: "SOP Kenaikan Pangkat PNS", category: "Mutasi", fileUrl: "#" },
+      { id: "2", title: "SOP Penerbitan Izin Belajar / Tugas Belajar", category: "Pendidikan & Latihan", fileUrl: "#" },
+      { id: "3", title: "SOP Usul Pensiun BUP (Batas Usia Pensiun)", category: "Kesejahteraan & Pensiun", fileUrl: "#" },
+      { id: "4", title: "SOP Penerbitan Kartu Suami / Istri (Karsu/Karis)", category: "Kesejahteraan", fileUrl: "#" },
+      { id: "5", title: "SOP Mutasi Masuk Kabupaten Sorong", category: "Mutasi", fileUrl: "#" }
+    ];
+
+    const defaultRequirements = [
+      { id: "1", title: "Kenaikan Pangkat Reguler", content: "<p>Berikut adalah berkas persyaratan yang wajib diunggah:</p><ul><li>Fotokopi SK PNS (legalisir)</li><li>Fotokopi SK Pangkat Terakhir (legalisir)</li><li>Penilaian Kinerja Pegawai (SKP) 2 Tahun Terakhir bernilai Baik</li><li>Fotokopi Ijazah & Transkrip Nilai Terakhir</li><li>Surat Pernyataan Tidak Sedang Menjalani Hukuman Disiplin</li></ul>" },
+      { id: "2", title: "Izin Belajar ASN", content: "<p>ASN yang berniat melanjutkan pendidikan harus melampirkan berkas:</p><ul><li>Surat Pengantar Kepala OPD asli</li><li>Fotokopi SK PNS dan SK Pangkat Terakhir</li><li>Penilaian Kinerja Pegawai (SKP) 1 Tahun Terakhir</li><li>Surat Keterangan Akreditasi Program Studi minimal B</li><li>Surat Keterangan dari Lembaga Pendidikan tempat kuliah</li></ul>" },
+      { id: "3", title: "Mutasi Masuk Daerah", content: "<p>Persyaratan permohonan mutasi masuk ke Pemerintah Kab. Sorong:</p><ol><li>Surat Permohonan Mutasi Pribadi bersangkutan</li><li>Surat Persetujuan Melepas dari Kepala Daerah Asal</li><li>Surat Rekomendasi Menerima dari OPD tujuan Kabupaten Sorong</li><li>Analisis Jabatan (Anjab) & Analisis Beban Kerja (ABK) formasi yang dituju</li><li>Fotokopi SK CPNS, PNS, dan Pangkat Terakhir</li></ol>" }
+    ];
+
+    const defaultPicContacts = [
+      { id: "1", name: "Yusak M. Sesa, S.IP.", role: "Kepala Bidang Mutasi", phone: "+62 813-987-654", service: "Kenaikan Pangkat, Mutasi Masuk/Keluar, Penyesuaian Ijazah" },
+      { id: "2", name: "Samsul Hadi, S.Kom.", role: "Kepala Bidang Pembinaan & Kinerja", phone: "+62 812-445-998", service: "Sasaran Kinerja Pegawai (SKP), Disiplin Pegawai, Pengawasan" },
+      { id: "3", name: "Ratna Sari, S.E.", role: "Kepala Bidang Diklat & Formasi", phone: "+62 811-223-455", service: "Izin Belajar, Tugas Belajar, Pengusulan Formasi CPNS/PPPK" }
+    ];
+
+    const defaultUsers = [
+      {
+        id: "1",
+        name: "Administrator",
+        username: "admin",
+        password: "admin",
+        role: "Super Admin",
+        active: true,
+        lastLogin: ""
+      }
+    ];
+
+    const defaultSettings = {
+      portalTitle: "BKDD Kab. Sorong",
+      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Lambang_Kabupaten_Sorong.png/422px-Lambang_Kabupaten_Sorong.png",
+      heroBgUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1469&auto=format&fit=crop",
+      totalAsn: "3,482",
+      heroBadge: "Layanan Kepegawaian Digital Terpadu",
+      heroTitle1: "Smart",
+      heroTitleGrad: "ASN",
+      heroTitle2: "Portal",
+      heroDesc: "Akses cepat dan mudah ke seluruh sistem informasi dan layanan administrasi kepegawaian di lingkungan Pemerintah Kabupaten Sorong.",
+      maklumatText: "Dengan ini, Kami menyatakan sanggup menyelenggarakan pelayanan administrasi kepegawaian sesuai dengan standar pelayanan yang telah ditetapkan, dan apabila tidak menepati janji ini, kami siap menerima sanksi sesuai ketentuan peraturan perundang-undangan yang berlaku.",
+      contactAddress: "Jl. Sorong - Klamono Km. 24, Aimas, Kabupaten Sorong, Papua Barat Daya 98451",
+      contactPhone: "+62 951 322331",
+      contactEmail: "info@bkdd.sorongkab.go.id",
+      contactWeb: "bkdd.sorongkab.go.id",
+      socialFb: "https://facebook.com",
+      socialIg: "https://instagram.com",
+      socialYt: "https://youtube.com",
+      socialX: "https://twitter.com"
+    };
+
+    // --- LOCAL STORAGE HELPERS ---
+    function getStoredData(key, fallback) {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : fallback;
+    }
+
+    function saveStoredData(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+      if (key.startsWith('bkdd_')) {
+        queueCloudSync();
+      }
+    }
+
+    window.__cloudBackendReady = false;
+    window.__isCloudHydrating = false;
+    window.__pendingCloudSync = false;
+    let cloudSyncTimer = null;
+
+    function queueCloudSync() {
+      if (window.__isCloudHydrating) {
+        return;
+      }
+
+      if (!window.__cloudBackendReady || typeof window.syncToCloud !== 'function') {
+        window.__pendingCloudSync = true;
+        return;
+      }
+
+      clearTimeout(cloudSyncTimer);
+      cloudSyncTimer = setTimeout(() => {
+        window.syncToCloud().catch((error) => {
+          console.error('Gagal sinkronisasi ke cloud:', error);
+        });
+      }, 250);
+    }
+
+    // Initialize Datasets from Storage
+    let services = getStoredData('bkdd_services', defaultServices);
+    let news = getStoredData('bkdd_news', defaultNews);
+    let leaders = getStoredData('bkdd_leaders', defaultLeaders);
+    let sops = getStoredData('bkdd_sops', defaultSOPs);
+    let requirements = getStoredData('bkdd_requirements', defaultRequirements);
+    let picContacts = getStoredData('bkdd_pic_contacts', defaultPicContacts);
+    let users = getStoredData('bkdd_users', defaultUsers);
+    let settings = getStoredData('bkdd_settings', defaultSettings);
+
+    // --- LIFE CYCLE ---
+    window.addEventListener('DOMContentLoaded', () => {
+      // Setup Dark Mode Preference
+      const savedDark = localStorage.getItem('bkdd_dark');
+      if (savedDark === 'true') {
+        document.documentElement.classList.add('dark');
+        appState.darkMode = true;
+        document.getElementById('theme-icon').className = 'fa-solid fa-sun text-lg';
+      }
+
+      // Check Session Login
+      const isAuth = sessionStorage.getItem('bkdd_auth');
+      if (isAuth === 'true') {
+        appState.isLoggedIn = true;
+      }
+      syncCurrentAdminContext();
+
+      // Render All Modules
+      applyPortalSettings();
+      renderPortalLeaders();
+      renderPortalServices();
+      renderPortalNews();
+      renderPortalSOP();
+      renderPortalRequirements();
+      updateStats();
+
+      // Fade Out Loading
+      setTimeout(() => {
+        const loader = document.getElementById('loading-overlay');
+        if (loader) {
+          loader.classList.add('opacity-0');
+          setTimeout(() => loader.remove(), 500);
+        }
+      }, 600);
+    });
+
+    // --- DOM APPLY FROM SETTINGS ---
+    function applyPortalSettings() {
+      // Set logos
+      document.getElementById('portal-nav-logo-img').src = settings.logoUrl;
+      document.getElementById('portal-footer-logo-img').src = settings.logoUrl;
+      document.getElementById('admin-nav-logo-img').src = settings.logoUrl;
+
+      // Hero background
+      document.getElementById('portal-hero-section').style.backgroundImage = `url('${settings.heroBgUrl}')`;
+
+      // Statistics
+      document.getElementById('portal-stat-1').innerText = settings.totalAsn;
+
+      // Text configurations
+      document.getElementById('portal-nav-title').innerText = settings.portalTitle;
+      document.getElementById('portal-footer-title').innerText = settings.portalTitle;
+      document.getElementById('portal-hero-badge').innerText = settings.heroBadge;
+      document.getElementById('portal-hero-title1').innerText = settings.heroTitle1;
+      document.getElementById('portal-hero-title-grad').innerText = settings.heroTitleGrad;
+      document.getElementById('portal-hero-title2').innerText = settings.heroTitle2;
+      document.getElementById('portal-hero-desc').innerText = settings.heroDesc;
+      document.getElementById('portal-footer-desc').innerText = settings.heroDesc;
+
+      // Maklumat
+      document.getElementById('portal-maklumat-content').innerText = `"${settings.maklumatText}"`;
+
+      // Contacts Footer
+      document.getElementById('portal-contact-address').innerText = settings.contactAddress;
+      document.getElementById('portal-contact-phone').innerText = settings.contactPhone;
+      document.getElementById('portal-contact-email').innerText = settings.contactEmail;
+      document.getElementById('portal-contact-web').innerText = settings.contactWeb;
+
+      // Social Links
+      document.getElementById('link-fb').href = settings.socialFb;
+      document.getElementById('link-ig').href = settings.socialIg;
+      document.getElementById('link-yt').href = settings.socialYt;
+      document.getElementById('link-x').href = settings.socialX;
+    }
+
+    // --- TOAST SYSTEM ---
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast-enter p-4 rounded-2xl shadow-xl flex items-center gap-3 border pointer-events-auto max-w-sm ${
+        type === 'success' 
+          ? 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-950/90 dark:border-emerald-800 dark:text-emerald-300' 
+          : type === 'danger'
+          ? 'bg-rose-50 border-rose-200 text-rose-800 dark:bg-rose-950/90 dark:border-rose-800 dark:text-rose-300'
+          : 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950/90 dark:border-blue-800 dark:text-blue-300'
+      }`;
+      const icon = type === 'success' ? 'fa-circle-check' : type === 'danger' ? 'fa-circle-exclamation' : 'fa-info-circle';
+      toast.innerHTML = `
+        <i class="fa-solid ${icon} text-lg shrink-0"></i>
+        <div class="text-sm font-bold flex-1">${message}</div>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.remove('toast-enter');
+        toast.classList.add('toast-exit');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // --- MODAL TRIGGERS ---
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove('hidden');
+        el.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+      }
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove('flex');
+        el.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+      }
+    }
+
+    // --- DARK MODE TOGGLE ---
+    function toggleDarkMode() {
+      appState.darkMode = !appState.darkMode;
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('theme-icon');
+      if (appState.darkMode) {
+        html.classList.remove('light');
+        html.classList.add('dark');
+        themeIcon.className = 'fa-solid fa-sun text-lg';
+        localStorage.setItem('bkdd_dark', 'true');
+        showToast('Tema Gelap Diaktifkan', 'success');
+      } else {
+        html.classList.remove('dark');
+        html.classList.add('light');
+        themeIcon.className = 'fa-solid fa-moon text-lg';
+        localStorage.setItem('bkdd_dark', 'false');
+        showToast('Tema Terang Diaktifkan', 'success');
+      }
+    }
+
+    // --- CONFIRM CUSTOM DIALOG ---
+    let confirmAction = null;
+    function showConfirm(title, message, callback) {
+      document.getElementById('confirm-title').innerText = title;
+      document.getElementById('confirm-message').innerText = message;
+      confirmAction = callback;
+      openModal('confirm-modal');
+    }
+
+    document.getElementById('confirm-yes-btn').addEventListener('click', () => {
+      if (confirmAction) {
+        confirmAction();
+        confirmAction = null;
+      }
+      closeModal('confirm-modal');
+    });
+
+    // --- RENDER COMPONENT: SERVICES ---
+    function renderPortalServices() {
+      const listEl = document.getElementById('portal-menu-list');
+      const emptyStateEl = document.getElementById('portal-empty-state');
+      const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+      
+      let filtered = services.filter(s => 
+        s.title.toLowerCase().includes(searchVal) || 
+        s.desc.toLowerCase().includes(searchVal)
+      );
+
+      listEl.innerHTML = '';
+      if (filtered.length === 0) {
+        emptyStateEl.classList.remove('hidden');
+        return;
+      }
+      emptyStateEl.classList.add('hidden');
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-lg shadow-slate-100/50 dark:shadow-none card-hover flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl mb-6 shadow-inner">
+              <i class="fa-solid ${item.icon}"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-slate-800 dark:text-white mb-2">${item.title}</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-light mb-6">${item.desc}</p>
+          </div>
+          <a href="${item.url}" target="_blank" class="w-full py-3 bg-slate-50 hover:bg-blue-600 dark:bg-slate-800/80 dark:hover:bg-blue-600 text-slate-600 dark:text-slate-300 hover:text-white rounded-xl text-center font-bold text-sm transition flex items-center justify-center gap-2">
+            Akses Layanan <i class="fa-solid fa-arrow-right text-xs"></i>
+          </a>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    // --- RENDER COMPONENT: LEADERS ---
+    function renderPortalLeaders() {
+      const container = document.getElementById('portal-leaders-list');
+      container.innerHTML = '';
+
+      leaders.forEach(item => {
+        const itemEl = document.createElement('div');
+        itemEl.className = "bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-xl w-72 flex flex-col items-center text-center relative card-hover";
+        itemEl.innerHTML = `
+          <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-500/20 mb-4 shadow-md bg-slate-100 flex justify-center items-center">
+            <img src="${item.photo}" alt="${item.name}" class="w-full h-full object-cover">
+          </div>
+          <h3 class="font-black text-slate-800 dark:text-white text-lg leading-tight mb-1">${item.name}</h3>
+          <p class="text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-widest mb-3">${item.position}</p>
+          <div class="text-[11px] text-slate-400 dark:text-slate-500 font-mono mt-1 border-t border-slate-100 dark:border-slate-800/60 pt-3 w-full">
+            NIP. ${item.nip || "-"}
+          </div>
+        `;
+        container.appendChild(itemEl);
+      });
+    }
+
+    // --- RENDER COMPONENT: NEWS ---
+    function renderPortalNews() {
+      const container = document.getElementById('portal-news-list');
+      const emptyEl = document.getElementById('portal-news-empty');
+      container.innerHTML = '';
+
+      if (news.length === 0) {
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+      emptyEl.classList.add('hidden');
+
+      news.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl overflow-hidden shadow-lg card-hover flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="h-48 overflow-hidden bg-slate-200 relative">
+              <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover">
+              <span class="absolute top-4 left-4 bg-blue-600 text-white text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-md">KABAR KABUPATEN</span>
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 mb-3 font-semibold">
+                <i class="fa-regular fa-calendar"></i> <span>${formatDateString(item.date)}</span>
+                <span class="mx-1">â€¢</span>
+                <i class="fa-solid fa-user-pen"></i> <span>${item.author}</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-800 dark:text-white line-clamp-2 mb-3 leading-snug">${item.title}</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 font-light line-clamp-3 leading-relaxed">${item.content}</p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-2">
+            <button onclick="readNewsDetail('${item.id}')" class="w-full py-3 bg-blue-50 hover:bg-blue-600 dark:bg-slate-800 text-blue-600 dark:text-blue-400 hover:text-white rounded-xl text-center font-bold text-sm transition flex items-center justify-center gap-2">
+              Baca Selengkapnya <i class="fa-solid fa-angle-right"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // --- NEWS MODAL VIEW ---
+    function readNewsDetail(id) {
+      const findNews = news.find(n => n.id === id);
+      if (!findNews) return;
+
+      const container = document.getElementById('news-detail-container');
+      container.innerHTML = `
+        <div class="h-64 sm:h-80 w-full overflow-hidden relative">
+          <img src="${findNews.image}" alt="${findNews.title}" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
+          <div class="absolute bottom-6 left-6 right-6">
+            <span class="bg-blue-600 text-white text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wider mb-3 inline-block">BERITA UTAMA</span>
+            <h2 class="text-2xl sm:text-3xl font-black text-white leading-tight">${findNews.title}</h2>
+          </div>
+        </div>
+        <div class="p-6 sm:p-8 space-y-4">
+          <div class="flex flex-wrap gap-4 text-xs text-slate-500 dark:text-slate-400 font-bold border-b border-slate-100 dark:border-slate-800 pb-4">
+            <div class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-blue-500"></i> Tanggal Rilis: ${formatDateString(findNews.date)}</div>
+            <div class="flex items-center gap-1.5"><i class="fa-solid fa-user-pen text-blue-500"></i> Kontributor: ${findNews.author}</div>
+          </div>
+          <div class="prose-content text-slate-600 dark:text-slate-300 leading-relaxed font-light text-base text-justify whitespace-pre-line">
+            ${findNews.content}
+          </div>
+        </div>
+      `;
+      openModal('news-modal-view');
+    }
+
+    // --- RENDER COMPONENT: SOP (INTERACTIVE MODAL DECK) ---
+    function toggleSOPVisibility() {
+      const container = document.getElementById('sop-content-container');
+      const icon = document.getElementById('icon-toggle-sop');
+      const btnSpan = document.querySelector('#btn-toggle-sop span');
+
+      appState.sopVisible = !appState.sopVisible;
+      if (appState.sopVisible) {
+        container.classList.remove('hidden');
+        setTimeout(() => {
+          container.classList.remove('opacity-0', 'translate-y-4');
+          container.classList.add('opacity-100', 'translate-y-0');
+        }, 10);
+        icon.style.transform = 'rotate(180deg)';
+        btnSpan.innerText = "Sembunyikan Daftar SOP";
+        showToast("Menampilkan seluruh Standar Operasional Prosedur", "info");
+      } else {
+        container.classList.add('opacity-0', 'translate-y-4');
+        container.classList.remove('opacity-100', 'translate-y-0');
+        setTimeout(() => container.classList.add('hidden'), 500);
+        icon.style.transform = 'rotate(0deg)';
+        btnSpan.innerText = "Lihat Daftar SOP";
+      }
+    }
+
+    function filterSOP(category) {
+      appState.activeSOPFilter = category;
+      
+      // Update filter pills styles
+      const filterIds = {
+        'Semua': 'filter-sop-all',
+        'Mutasi': 'filter-sop-mutasi',
+        'Kesejahteraan': 'filter-sop-kesra',
+        'Pendidikan & Latihan': 'filter-sop-diklat',
+        'Disiplin & Kinerja': 'filter-sop-disiplin'
+      };
+
+      Object.entries(filterIds).forEach(([cat, id]) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (cat === category) {
+          btn.className = "px-4 py-2 text-xs font-bold rounded-xl transition bg-blue-600 text-white shadow-md shadow-blue-500/20";
+        } else {
+          btn.className = "px-4 py-2 text-xs font-bold rounded-xl transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100";
+        }
+      });
+
+      renderPortalSOP();
+    }
+
+    function renderPortalSOP() {
+      const cardsGrid = document.getElementById('portal-sop-cards-grid');
+      const searchVal = document.getElementById('search-sop').value.toLowerCase().trim();
+      cardsGrid.innerHTML = '';
+
+      let filtered = sops;
+      
+      // Category filter match
+      if (appState.activeSOPFilter !== 'Semua') {
+        filtered = filtered.filter(s => s.category === appState.activeSOPFilter);
+      }
+
+      // Keyword search match
+      if (searchVal) {
+        filtered = filtered.filter(s => 
+          s.title.toLowerCase().includes(searchVal) || 
+          s.category.toLowerCase().includes(searchVal)
+        );
+      }
+
+      if (filtered.length === 0) {
+        cardsGrid.innerHTML = `
+          <div class="col-span-full py-12 text-center bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl">
+            <i class="fa-solid fa-folder-open text-slate-300 dark:text-slate-700 text-4xl mb-4"></i>
+            <p class="text-sm text-slate-400 italic">Berkas SOP tidak ditemukan</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        // Icon and color mapping per category
+        let colorClass = "from-blue-500 to-cyan-500 shadow-blue-500/20";
+        let iconClass = "fa-folder-tree";
+        
+        if (item.category === 'Mutasi') {
+          colorClass = "from-violet-500 to-fuchsia-500 shadow-violet-500/20";
+          iconClass = "fa-arrows-spin";
+        } else if (item.category === 'Kesejahteraan') {
+          colorClass = "from-emerald-500 to-teal-500 shadow-emerald-500/20";
+          iconClass = "fa-heart-circle-check";
+        } else if (item.category === 'Pendidikan & Latihan') {
+          colorClass = "from-amber-500 to-orange-500 shadow-amber-500/20";
+          iconClass = "fa-graduation-cap";
+        } else if (item.category === 'Disiplin & Kinerja') {
+          colorClass = "from-rose-500 to-pink-500 shadow-rose-500/20";
+          iconClass = "fa-stamp";
+        }
+
+        const card = document.createElement('div');
+        card.className = "bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 shadow-md shadow-slate-100/50 dark:shadow-none card-hover flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold">
+                <i class="fa-solid ${iconClass} text-[10px]"></i> ${item.category}
+              </span>
+              <span class="text-[10px] text-slate-400 font-mono font-bold uppercase">SOP DOC</span>
+            </div>
+            <h4 class="text-base font-extrabold text-slate-800 dark:text-white leading-snug mb-6">${item.title}</h4>
+          </div>
+          <a href="${item.fileUrl}" class="w-full py-3 bg-gradient-to-r ${colorClass} text-white rounded-xl text-center font-extrabold text-xs transition duration-300 flex items-center justify-center gap-2 shadow-lg">
+            <i class="fa-solid fa-download"></i> Unduh Berkas Prosedur
+          </a>
+        `;
+        cardsGrid.appendChild(card);
+      });
+    }
+
+    // --- RENDER COMPONENT: REQUIREMENTS ---
+    function renderPortalRequirements() {
+      const tabsContainer = document.getElementById('req-tabs-list');
+      tabsContainer.innerHTML = '';
+
+      if (requirements.length === 0) {
+        document.getElementById('req-detail-title').innerText = "Belum Ada Layanan";
+        document.getElementById('req-detail-content').innerHTML = "<p class='text-center text-slate-400 mt-10'>Tidak ada prasyarat layanan saat ini.</p>";
+        return;
+      }
+
+      requirements.forEach((item, index) => {
+        const tabBtn = document.createElement('button');
+        tabBtn.className = `w-full text-left px-5 py-4 rounded-2xl transition-all duration-300 flex items-center justify-between shrink-0 ${
+          index === appState.currentRequirementIndex ? 'tab-btn-active' : 'tab-btn-inactive'
+        }`;
+        tabBtn.innerHTML = `
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-file-shield text-lg shrink-0"></i>
+            <span class="truncate pr-2 font-bold">${item.title}</span>
+          </div>
+          <i class="fa-solid fa-angle-right text-sm"></i>
+        `;
+        tabBtn.onclick = () => {
+          appState.currentRequirementIndex = index;
+          renderPortalRequirements();
+        };
+        tabsContainer.appendChild(tabBtn);
+      });
+
+      // Update Detail Content Card
+      const current = requirements[appState.currentRequirementIndex];
+      if (current) {
+        document.getElementById('req-detail-title').innerText = current.title;
+        document.getElementById('req-detail-content').innerHTML = current.content;
+      }
+    }
+
+    // --- PIC KABID CENTER MODAL ---
+    function renderPicContacts() {
+      const container = document.getElementById('pic-list-container');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      if (!picContacts.length) {
+        container.innerHTML = `<p class="text-sm text-slate-500 dark:text-slate-400 text-center py-8">Belum ada kontak PIC yang diatur.</p>`;
+        return;
+      }
+
+      picContacts.forEach(pic => {
+        const item = document.createElement('div');
+        item.className = "bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col justify-between";
+        item.innerHTML = `
+          <div>
+            <h4 class="font-bold text-slate-800 dark:text-white text-base">${pic.name}</h4>
+            <p class="text-blue-600 dark:text-blue-400 text-xs font-bold">${pic.role}</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-2 font-light">Melayani: ${pic.service}</p>
+          </div>
+          <a href="https://wa.me/${pic.phone.replace(/[^0-9]/g, '')}" target="_blank" class="mt-4 w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-center text-xs font-bold transition flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20">
+            <i class="fa-brands fa-whatsapp text-sm"></i> Kirim Pesan WhatsApp
+          </a>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    const picModalButton = document.querySelector('[onclick="openModal(\'pic-modal-view\')"]');
+    if (picModalButton) {
+      picModalButton.addEventListener('click', renderPicContacts);
+    }
+
+    // --- STATS COUNT UPDATER ---
+    function updateStats() {
+      document.getElementById('portal-stat-2').innerText = services.length;
+    }
+
+    function updateAdminUserBadge() {
+      const nameEl = document.getElementById('admin-current-user-name');
+      const roleEl = document.getElementById('admin-current-user-role');
+      if (nameEl) nameEl.innerText = appState.currentUserName || 'Administrator';
+      if (roleEl) roleEl.innerText = appState.currentUserRole || 'Full Access';
+    }
+
+    function syncCurrentAdminContext() {
+      if (!appState.isLoggedIn) {
+        appState.currentUserUsername = '';
+        appState.currentUserName = 'Administrator';
+        appState.currentUserRole = 'Full Access';
+        updateAdminUserBadge();
+        return;
+      }
+
+      appState.currentUserUsername = '';
+      appState.currentUserName = 'Administrator';
+      appState.currentUserRole = 'Full Access';
+
+      const savedUsername = sessionStorage.getItem('bkdd_user');
+      const sessionUser = (savedUsername && users.find(u => u.username === savedUsername && u.active !== false))
+        || users.find(u => u.active !== false);
+
+      if (sessionUser) {
+        appState.currentUserUsername = sessionUser.username;
+        appState.currentUserName = sessionUser.name;
+        appState.currentUserRole = sessionUser.role;
+        sessionStorage.setItem('bkdd_user', sessionUser.username);
+      }
+
+      updateAdminUserBadge();
+    }
+
+    // --- ADMIN SYSTEM CONTROLLER ---
+    function handleLogin(event) {
+      event.preventDefault();
+      const u = document.getElementById('login-username').value;
+      const p = document.getElementById('login-password').value;
+
+      const matchedUser = users.find(user => user.username === u && user.password === p && user.active !== false);
+      if (matchedUser) {
+        appState.isLoggedIn = true;
+        appState.currentUserUsername = matchedUser.username;
+        appState.currentUserName = matchedUser.name;
+        appState.currentUserRole = matchedUser.role;
+        sessionStorage.setItem('bkdd_auth', 'true');
+        sessionStorage.setItem('bkdd_user', matchedUser.username);
+        matchedUser.lastLogin = new Date().toISOString();
+        saveStoredData('bkdd_users', users);
+        closeModal('login-modal');
+        showToast(`Otorisasi Berhasil. Selamat datang ${matchedUser.name}!`, 'success');
+        
+        document.getElementById('login-username').value = '';
+        document.getElementById('login-password').value = '';
+        updateAdminUserBadge();
+
+        setTimeout(() => togglePortalView(), 300);
+      } else {
+        showToast('Kredensial salah. Harap coba lagi!', 'danger');
+      }
+    }
+
+    function handleLogout() {
+      showConfirm('Konfirmasi Logout', 'Anda akan keluar dari Konsol Dashboard Admin BKDD.', () => {
+        appState.isLoggedIn = false;
+        appState.currentUserUsername = '';
+        appState.currentUserName = 'Administrator';
+        appState.currentUserRole = 'Full Access';
+        sessionStorage.removeItem('bkdd_auth');
+        sessionStorage.removeItem('bkdd_user');
+        updateAdminUserBadge();
+        
+        document.getElementById('admin-view').classList.add('hidden');
+        document.getElementById('portal-view').classList.remove('hidden');
+        
+        showToast('Anda berhasil logout.', 'info');
+      });
+    }
+
+    // -- SINKRONISASI CLOUD DATABASE --
+    window.appState = appState;
+
+    window.addEventListener('cloudDataUpdated', () => {
+      applyPortalSettings();
+      renderPortalLeaders();
+      renderPortalServices();
+      renderPortalNews();
+      renderPortalSOP();
+      renderPortalRequirements();
+      if (!document.getElementById('pic-modal-view').classList.contains('hidden')) {
+        renderPicContacts();
+      }
+      updateStats();
+      syncCurrentAdminContext();
+      if (!document.getElementById('admin-view').classList.contains('hidden') && appState.currentAdminTab === 'users') {
+        renderAdminUsers();
+      } else if (!document.getElementById('admin-view').classList.contains('hidden') && appState.currentAdminTab === 'pic-contacts') {
+        renderAdminPicContacts();
+      }
+    });
+
+    function togglePortalView() {
+      const portal = document.getElementById('portal-view');
+      const admin = document.getElementById('admin-view');
+
+      if (portal.classList.contains('hidden')) {
+        portal.classList.remove('hidden');
+        admin.classList.add('hidden');
+        document.title = "BKDD Kabupaten Sorong | Portal Satu Pintu";
+        
+        applyPortalSettings();
+        renderPortalServices();
+        renderPortalNews();
+        renderPortalLeaders();
+        renderPortalSOP();
+        renderPortalRequirements();
+        updateStats();
+      } else {
+        if (!appState.isLoggedIn) {
+          openModal('login-modal');
+          return;
+        }
+        portal.classList.add('hidden');
+        admin.classList.remove('hidden');
+        document.title = "Konsol Administrator | BKDD Kabupaten Sorong";
+        setAdminTab(appState.currentAdminTab);
+      }
+    }
+
+    // --- ADMIN TABS CONTROLLER & CRUD ---
+    let editingId = null;
+
+    function setAdminTab(tabKey) {
+      appState.currentAdminTab = tabKey;
+      editingId = null;
+
+      document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+        btn.classList.remove('admin-tab-btn-active', 'text-white', 'bg-slate-900');
+        btn.classList.add('text-slate-400');
+      });
+      const activeBtn = document.getElementById(`tab-admin-${tabKey}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-400');
+        activeBtn.classList.add('admin-tab-btn-active', 'text-white', 'bg-slate-900');
+      }
+
+      const tabTitle = document.getElementById('admin-tab-title');
+      const tabSubtitle = document.getElementById('admin-tab-subtitle');
+      const addBtn = document.getElementById('admin-add-btn');
+
+      addBtn.classList.remove('hidden');
+      
+      switch(tabKey) {
+        case 'services':
+          tabTitle.innerText = "Kelola Layanan Digital";
+          tabSubtitle.innerText = "Kelola tautan aplikasi Smart ASN yang tampil di halaman depan.";
+          addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Tambah Layanan';
+          addBtn.onclick = () => openAdminForm('services');
+          renderAdminServices();
+          break;
+        case 'news':
+          tabTitle.innerText = "Kelola Berita & Info";
+          tabSubtitle.innerText = "Publikasikan kabar informasi/seleksi terhangat untuk publik.";
+          addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Tulis Berita';
+          addBtn.onclick = () => openAdminForm('news');
+          renderAdminNews();
+          break;
+        case 'leaders':
+          tabTitle.innerText = "Kelola Struktur Pimpinan";
+          tabSubtitle.innerText = "Ubah profil atau jajaran kabid struktural BKDD.";
+          addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Tambah Pimpinan';
+          addBtn.onclick = () => openAdminForm('leaders');
+          renderAdminLeaders();
+          break;
+        case 'sops':
+          tabTitle.innerText = "Kelola Prosedur SOP";
+          tabSubtitle.innerText = "Daftar berkas SOP untuk diunduh ASN dan pegawai.";
+          addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Tambah SOP';
+          addBtn.onclick = () => openAdminForm('sops');
+          renderAdminSops();
+          break;
+        case 'requirements':
+          tabTitle.innerText = "Kelola Persyaratan Layanan";
+          tabSubtitle.innerText = "Sesuaikan panduan berkas kelengkapan administrasi kepegawaian.";
+          addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Tambah Persyaratan';
+          addBtn.onclick = () => openAdminForm('requirements');
+          renderAdminRequirements();
+          break;
+        case 'pic-contacts':
+          tabTitle.innerText = "Kontak PIC Bidang";
+          tabSubtitle.innerText = "Kelola daftar kontak PIC yang tampil pada modal bantuan publik.";
+          addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Tambah PIC';
+          addBtn.onclick = () => openAdminForm('pic-contacts');
+          renderAdminPicContacts();
+          break;
+        case 'users':
+          tabTitle.innerText = "Manajemen User";
+          tabSubtitle.innerText = "Kelola akun yang bisa masuk ke dashboard admin.";
+          addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Tambah User';
+          addBtn.onclick = () => openAdminForm('users');
+          renderAdminUsers();
+          break;
+        case 'settings':
+          tabTitle.innerText = "Pengaturan Umum Portal";
+          tabSubtitle.innerText = "Ubah instan nama, teks hero, maklumat pelayanan, media sosial, dan data kontak dinas.";
+          addBtn.classList.add('hidden');
+          renderAdminSettingsForm();
+          break;
+      }
+    }
+
+    // --- ADMIN TABLE DRAWERS ---
+    function renderAdminServices() {
+      const holder = document.getElementById('admin-content-holder');
+      holder.innerHTML = `
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-900 text-slate-400 text-xs uppercase tracking-wider">
+              <tr>
+                <th class="px-6 py-4 font-bold">Ikon</th>
+                <th class="px-6 py-4 font-bold">Nama Aplikasi</th>
+                <th class="px-6 py-4 font-bold">Tautan URL</th>
+                <th class="px-6 py-4 font-bold text-right">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-900 text-sm">
+              ${services.map(item => `
+                <tr class="hover:bg-slate-900/40">
+                  <td class="px-6 py-4"><i class="fa-solid ${item.icon} text-blue-500 text-xl"></i></td>
+                  <td class="px-6 py-4 font-bold text-white">${item.title}</td>
+                  <td class="px-6 py-4 text-slate-400 font-mono text-xs">${item.url}</td>
+                  <td class="px-6 py-4 text-right space-x-2">
+                    <button onclick="editItem('services', '${item.id}')" class="text-blue-400 hover:text-white transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="deleteItem('services', '${item.id}')" class="text-red-400 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderAdminNews() {
+      const holder = document.getElementById('admin-content-holder');
+      holder.innerHTML = `
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-900 text-slate-400 text-xs uppercase tracking-wider">
+              <tr>
+                <th class="px-6 py-4 font-bold">Judul Berita</th>
+                <th class="px-6 py-4 font-bold">Tanggal</th>
+                <th class="px-6 py-4 font-bold">Penulis</th>
+                <th class="px-6 py-4 font-bold text-right">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-900 text-sm">
+              ${news.map(item => `
+                <tr class="hover:bg-slate-900/40">
+                  <td class="px-6 py-4 font-bold text-white max-w-sm truncate">${item.title}</td>
+                  <td class="px-6 py-4 text-slate-400">${item.date}</td>
+                  <td class="px-6 py-4 text-slate-400">${item.author}</td>
+                  <td class="px-6 py-4 text-right space-x-2">
+                    <button onclick="editItem('news', '${item.id}')" class="text-blue-400 hover:text-white transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="deleteItem('news', '${item.id}')" class="text-red-400 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderAdminLeaders() {
+      const holder = document.getElementById('admin-content-holder');
+      holder.innerHTML = `
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-900 text-slate-400 text-xs uppercase tracking-wider">
+              <tr>
+                <th class="px-6 py-4 font-bold">Nama Lengkap</th>
+                <th class="px-6 py-4 font-bold">Jabatan</th>
+                <th class="px-6 py-4 font-bold">NIP</th>
+                <th class="px-6 py-4 font-bold text-right">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-900 text-sm">
+              ${leaders.map(item => `
+                <tr class="hover:bg-slate-900/40">
+                  <td class="px-6 py-4 font-bold text-white">${item.name}</td>
+                  <td class="px-6 py-4 text-blue-400 font-semibold">${item.position}</td>
+                  <td class="px-6 py-4 text-slate-400 font-mono text-xs">${item.nip}</td>
+                  <td class="px-6 py-4 text-right space-x-2">
+                    <button onclick="editItem('leaders', '${item.id}')" class="text-blue-400 hover:text-white transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="deleteItem('leaders', '${item.id}')" class="text-red-400 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderAdminSops() {
+      const holder = document.getElementById('admin-content-holder');
+      holder.innerHTML = `
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-900 text-slate-400 text-xs uppercase tracking-wider">
+              <tr>
+                <th class="px-6 py-4 font-bold">Judul SOP</th>
+                <th class="px-6 py-4 font-bold">Kategori</th>
+                <th class="px-6 py-4 font-bold text-right">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-900 text-sm">
+              ${sops.map(item => `
+                <tr class="hover:bg-slate-900/40">
+                  <td class="px-6 py-4 font-bold text-white">${item.title}</td>
+                  <td class="px-6 py-4 text-slate-400">${item.category}</td>
+                  <td class="px-6 py-4 text-right space-x-2">
+                    <button onclick="editItem('sops', '${item.id}')" class="text-blue-400 hover:text-white transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="deleteItem('sops', '${item.id}')" class="text-red-400 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderAdminRequirements() {
+      const holder = document.getElementById('admin-content-holder');
+      holder.innerHTML = `
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-900 text-slate-400 text-xs uppercase tracking-wider">
+              <tr>
+                <th class="px-6 py-4 font-bold">Layanan</th>
+                <th class="px-6 py-4 font-bold text-right">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-900 text-sm">
+              ${requirements.map(item => `
+                <tr class="hover:bg-slate-900/40">
+                  <td class="px-6 py-4 font-bold text-white">${item.title}</td>
+                  <td class="px-6 py-4 text-right space-x-2">
+                    <button onclick="editItem('requirements', '${item.id}')" class="text-blue-400 hover:text-white transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="deleteItem('requirements', '${item.id}')" class="text-red-400 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderAdminPicContacts() {
+      const holder = document.getElementById('admin-content-holder');
+      holder.innerHTML = `
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-900 text-slate-400 text-xs uppercase tracking-wider">
+              <tr>
+                <th class="px-6 py-4 font-bold">Nama PIC</th>
+                <th class="px-6 py-4 font-bold">Jabatan</th>
+                <th class="px-6 py-4 font-bold">WhatsApp</th>
+                <th class="px-6 py-4 font-bold">Layanan</th>
+                <th class="px-6 py-4 font-bold text-right">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-900 text-sm">
+              ${picContacts.map(item => `
+                <tr class="hover:bg-slate-900/40">
+                  <td class="px-6 py-4 font-bold text-white">${item.name}</td>
+                  <td class="px-6 py-4 text-blue-400 font-semibold">${item.role}</td>
+                  <td class="px-6 py-4 text-slate-400 font-mono text-xs">${item.phone}</td>
+                  <td class="px-6 py-4 text-slate-400 max-w-lg">${item.service}</td>
+                  <td class="px-6 py-4 text-right space-x-2">
+                    <button onclick="editItem('pic-contacts', '${item.id}')" class="text-blue-400 hover:text-white transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="deleteItem('pic-contacts', '${item.id}')" class="text-red-400 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderAdminUsers() {
+      const holder = document.getElementById('admin-content-holder');
+      holder.innerHTML = `
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-900 text-slate-400 text-xs uppercase tracking-wider">
+              <tr>
+                <th class="px-6 py-4 font-bold">Nama</th>
+                <th class="px-6 py-4 font-bold">Username</th>
+                <th class="px-6 py-4 font-bold">Role</th>
+                <th class="px-6 py-4 font-bold">Status</th>
+                <th class="px-6 py-4 font-bold">Login Terakhir</th>
+                <th class="px-6 py-4 font-bold text-right">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-900 text-sm">
+              ${users.map(item => `
+                <tr class="hover:bg-slate-900/40">
+                  <td class="px-6 py-4 font-bold text-white">${item.name}</td>
+                  <td class="px-6 py-4 text-slate-300 font-mono text-xs">${item.username}</td>
+                  <td class="px-6 py-4 text-blue-400 font-semibold">${item.role}</td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                      item.active !== false ? 'bg-emerald-500/15 text-emerald-400' : 'bg-rose-500/15 text-rose-400'
+                    }">
+                      ${item.active !== false ? 'Aktif' : 'Nonaktif'}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-slate-400 text-xs">${item.lastLogin ? new Date(item.lastLogin).toLocaleString('id-ID') : '-'}</td>
+                  <td class="px-6 py-4 text-right space-x-2">
+                    <button onclick="editItem('users', '${item.id}')" class="text-blue-400 hover:text-white transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="deleteItem('users', '${item.id}')" class="text-red-400 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderAdminSettingsForm() {
+      const holder = document.getElementById('admin-content-holder');
+      holder.innerHTML = `
+        <form onsubmit="handleSettingsUpdate(event)" class="p-6 md:p-8 space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Nama Instansi Portal</label>
+              <input type="text" id="set-portal-title" class="admin-input" value="${settings.portalTitle}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Tautan Gambar Logo (.png)</label>
+              <input type="text" id="set-logo-url" class="admin-input" value="${settings.logoUrl}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Gambar Latar Hero (Unsplash/Web)</label>
+              <input type="text" id="set-hero-bg-url" class="admin-input" value="${settings.heroBgUrl}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Statistik: Jumlah ASN Terdaftar</label>
+              <input type="text" id="set-total-asn" class="admin-input" value="${settings.totalAsn}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Badge Hero Atas</label>
+              <input type="text" id="set-hero-badge" class="admin-input" value="${settings.heroBadge}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Judul Hero (Kiri)</label>
+              <input type="text" id="set-hero-t1" class="admin-input" value="${settings.heroTitle1}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Judul Hero (Gradasi Tengah)</label>
+              <input type="text" id="set-hero-tgrad" class="admin-input" value="${settings.heroTitleGrad}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Judul Hero (Kanan)</label>
+              <input type="text" id="set-hero-t2" class="admin-input" value="${settings.heroTitle2}" required>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Deskripsi Hero</label>
+              <textarea id="set-hero-desc" class="admin-input h-20 resize-none" required>${settings.heroDesc}</textarea>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Teks Maklumat Pelayanan</label>
+              <textarea id="set-maklumat" class="admin-input h-24 resize-none" required>${settings.maklumatText}</textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Alamat Kontak Kantor</label>
+              <input type="text" id="set-contact-address" class="admin-input" value="${settings.contactAddress}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Nomor Telepon</label>
+              <input type="text" id="set-contact-phone" class="admin-input" value="${settings.contactPhone}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Surel / Email</label>
+              <input type="email" id="set-contact-email" class="admin-input" value="${settings.contactEmail}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Website Resmi</label>
+              <input type="text" id="set-contact-web" class="admin-input" value="${settings.contactWeb}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Sosial Media: Facebook (Link)</label>
+              <input type="text" id="set-social-fb" class="admin-input" value="${settings.socialFb}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Sosial Media: Instagram (Link)</label>
+              <input type="text" id="set-social-ig" class="admin-input" value="${settings.socialIg}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Sosial Media: YouTube (Link)</label>
+              <input type="text" id="set-social-yt" class="admin-input" value="${settings.socialYt}" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Sosial Media: X / Twitter (Link)</label>
+              <input type="text" id="set-social-x" class="admin-input" value="${settings.socialX}" required>
+            </div>
+          </div>
+          <div class="pt-4 flex justify-end">
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-lg shadow-emerald-500/10">Simpan Konfigurasi</button>
+          </div>
+        </form>
+      `;
+    }
+
+    function handleSettingsUpdate(e) {
+      e.preventDefault();
+      settings.portalTitle = document.getElementById('set-portal-title').value;
+      settings.logoUrl = document.getElementById('set-logo-url').value;
+      settings.heroBgUrl = document.getElementById('set-hero-bg-url').value;
+      settings.totalAsn = document.getElementById('set-total-asn').value;
+      settings.heroBadge = document.getElementById('set-hero-badge').value;
+      settings.heroTitle1 = document.getElementById('set-hero-t1').value;
+      settings.heroTitleGrad = document.getElementById('set-hero-tgrad').value;
+      settings.heroTitle2 = document.getElementById('set-hero-t2').value;
+      settings.heroDesc = document.getElementById('set-hero-desc').value;
+      settings.maklumatText = document.getElementById('set-maklumat').value;
+      settings.contactAddress = document.getElementById('set-contact-address').value;
+      settings.contactPhone = document.getElementById('set-contact-phone').value;
+      settings.contactEmail = document.getElementById('set-contact-email').value;
+      settings.contactWeb = document.getElementById('set-contact-web').value;
+      settings.socialFb = document.getElementById('set-social-fb').value;
+      settings.socialIg = document.getElementById('set-social-ig').value;
+      settings.socialYt = document.getElementById('set-social-yt').value;
+      settings.socialX = document.getElementById('set-social-x').value;
+
+      saveStoredData('bkdd_settings', settings);
+      applyPortalSettings();
+      showToast('Konfigurasi Pengaturan berhasil diperbarui!', 'success');
+    }
+
+    // --- ADMIN CRUD: ACTIONS ---
+    function deleteItem(type, id) {
+      showConfirm('Hapus Data', 'Apakah Anda yakin ingin menghapus data ini secara permanen dari sistem?', () => {
+        if (type === 'services') {
+          services = services.filter(s => s.id !== id);
+          saveStoredData('bkdd_services', services);
+          renderAdminServices();
+        } else if (type === 'news') {
+          news = news.filter(n => n.id !== id);
+          saveStoredData('bkdd_news', news);
+          renderAdminNews();
+        } else if (type === 'leaders') {
+          leaders = leaders.filter(l => l.id !== id);
+          saveStoredData('bkdd_leaders', leaders);
+          renderAdminLeaders();
+        } else if (type === 'sops') {
+          sops = sops.filter(s => s.id !== id);
+          saveStoredData('bkdd_sops', sops);
+          renderAdminSops();
+        } else if (type === 'requirements') {
+          requirements = requirements.filter(r => r.id !== id);
+          saveStoredData('bkdd_requirements', requirements);
+          renderAdminRequirements();
+        } else if (type === 'pic-contacts') {
+          picContacts = picContacts.filter(p => p.id !== id);
+          saveStoredData('bkdd_pic_contacts', picContacts);
+          renderAdminPicContacts();
+        } else if (type === 'users') {
+          const target = users.find(u => u.id === id);
+          const activeUsers = users.filter(u => u.active !== false);
+          if (target && target.active !== false && activeUsers.length <= 1) {
+            showToast('Minimal harus ada satu akun aktif.', 'danger');
+            return;
+          }
+
+          users = users.filter(u => u.id !== id);
+          saveStoredData('bkdd_users', users);
+          syncCurrentAdminContext();
+          renderAdminUsers();
+        }
+        showToast('Data berhasil dihapus dari server.', 'success');
+      });
+    }
+
+    function editItem(type, id) {
+      editingId = id;
+      openAdminForm(type, true);
+    }
+
+    // --- ADMIN DYNAMIC MODAL FORM ---
+    function openAdminForm(type, isEdit = false) {
+      const modal = document.getElementById('admin-form-modal');
+      const formTitle = document.getElementById('admin-form-title');
+      const formBody = document.getElementById('admin-form-body');
+
+      const labels = {
+        services: 'Layanan',
+        news: 'Berita',
+        leaders: 'Pimpinan',
+        sops: 'SOP',
+        requirements: 'Persyaratan',
+        'pic-contacts': 'Kontak PIC',
+        users: 'User'
+      };
+
+      formTitle.innerText = `${isEdit ? 'Ubah' : 'Tambah'} ${labels[type] || 'Data'}`;
+
+      let content = '';
+
+      if (type === 'services') {
+        const item = isEdit ? services.find(s => s.id === editingId) : { title: '', desc: '', url: '', icon: 'fa-cubes' };
+        content = `
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Nama Aplikasi</label>
+            <input type="text" id="form-service-title" class="admin-input" value="${item.title}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Deskripsi Singkat</label>
+            <textarea id="form-service-desc" class="admin-input h-20 resize-none" required>${item.desc}</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Tautan Aplikasi (Link URL)</label>
+            <input type="text" id="form-service-url" class="admin-input" value="${item.url}" placeholder="https://..." required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Icon FontAwesome</label>
+            <select id="form-service-icon" class="admin-input" required>
+              <option value="fa-cubes" ${item.icon === 'fa-cubes' ? 'selected' : ''}>fa-cubes (Layanan)</option>
+              <option value="fa-users" ${item.icon === 'fa-users' ? 'selected' : ''}>fa-users (Pegawai)</option>
+              <option value="fa-chart-line" ${item.icon === 'fa-chart-line' ? 'selected' : ''}>fa-chart-line (Kinerja)</option>
+              <option value="fa-shield-halved" ${item.icon === 'fa-shield-halved' ? 'selected' : ''}>fa-shield-halved (SIAASN)</option>
+              <option value="fa-graduation-cap" ${item.icon === 'fa-graduation-cap' ? 'selected' : ''}>fa-graduation-cap (Diklat)</option>
+              <option value="fa-user-check" ${item.icon === 'fa-user-check' ? 'selected' : ''}>fa-user-check (MyASN)</option>
+              <option value="fa-arrows-spin" ${item.icon === 'fa-arrows-spin' ? 'selected' : ''}>fa-arrows-spin (Mutasi)</option>
+              <option value="fa-arrow-trend-up" ${item.icon === 'fa-arrow-trend-up' ? 'selected' : ''}>fa-arrow-trend-up (KP)</option>
+              <option value="fa-heart-circle-check" ${item.icon === 'fa-heart-circle-check' ? 'selected' : ''}>fa-heart-circle-check (Pensiun)</option>
+            </select>
+          </div>
+        `;
+      } else if (type === 'news') {
+        const item = isEdit ? news.find(n => n.id === editingId) : { title: '', date: new Date().toISOString().split('T')[0], author: 'BKDD Admin', content: '', image: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?q=80&w=1470&auto=format&fit=crop' };
+        content = `
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Judul Kabar/Berita</label>
+            <input type="text" id="form-news-title" class="admin-input" value="${item.title}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Tanggal Rilis</label>
+            <input type="date" id="form-news-date" class="admin-input" value="${item.date}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Penulis/OPD Sumber</label>
+            <input type="text" id="form-news-author" class="admin-input" value="${item.author}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Tautan Foto Cover Unsplash/Web</label>
+            <input type="text" id="form-news-image" class="admin-input" value="${item.image}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Isi Artikel / Konten Pengumuman</label>
+            <textarea id="form-news-content" class="admin-input h-32" required>${item.content}</textarea>
+          </div>
+        `;
+      } else if (type === 'leaders') {
+        const item = isEdit ? leaders.find(l => l.id === editingId) : { name: '', position: '', nip: '', photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1374&auto=format&fit=crop', contact: '' };
+        content = `
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Nama Lengkap & Gelar</label>
+            <input type="text" id="form-leader-name" class="admin-input" value="${item.name}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Jabatan Struktural</label>
+            <input type="text" id="form-leader-position" class="admin-input" value="${item.position}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Nomor Induk Pegawai (NIP)</label>
+            <input type="text" id="form-leader-nip" class="admin-input" value="${item.nip}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Tautan Pasfoto Resmi (Link URL)</label>
+            <input type="text" id="form-leader-photo" class="admin-input" value="${item.photo}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">No. Kontak Layanan (WhatsApp)</label>
+            <input type="text" id="form-leader-contact" class="admin-input" value="${item.contact}">
+          </div>
+        `;
+      } else if (type === 'sops') {
+        const item = isEdit ? sops.find(s => s.id === editingId) : { title: '', category: 'Mutasi', fileUrl: '#' };
+        content = `
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Nama Prosedur (SOP)</label>
+            <input type="text" id="form-sop-title" class="admin-input" value="${item.title}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Kategori Bagian</label>
+            <select id="form-sop-category" class="admin-input" required>
+              <option value="Mutasi" ${item.category === 'Mutasi' ? 'selected' : ''}>Mutasi & Promosi</option>
+              <option value="Kesejahteraan" ${item.category === 'Kesejahteraan' ? 'selected' : ''}>Kesejahteraan Pegawai</option>
+              <option value="Pendidikan & Latihan" ${item.category === 'Pendidikan & Latihan' ? 'selected' : ''}>Pendidikan & Latihan</option>
+              <option value="Disiplin & Kinerja" ${item.category === 'Disiplin & Kinerja' ? 'selected' : ''}>Disiplin & Kinerja</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Tautan Dokumen / File PDF</label>
+            <input type="text" id="form-sop-url" class="admin-input" value="${item.fileUrl}" placeholder="#" required>
+          </div>
+        `;
+      } else if (type === 'requirements') {
+        const item = isEdit ? requirements.find(r => r.id === editingId) : { title: '', content: '' };
+        content = `
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Nama Layanan</label>
+            <input type="text" id="form-req-title" class="admin-input" value="${item.title}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Detail Dokumen Persyaratan (Gunakan Format HTML: &lt;ul&gt; &lt;li&gt;)</label>
+            <textarea id="form-req-content" class="admin-input h-48" placeholder="Contoh: <p>Persyaratan:</p><ul><li>Dokumen SK</li></ul>" required>${item.content}</textarea>
+          </div>
+        `;
+      } else if (type === 'pic-contacts') {
+        const item = isEdit ? picContacts.find(p => p.id === editingId) : { name: '', role: '', phone: '', service: '' };
+        content = `
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Nama PIC</label>
+            <input type="text" id="form-pic-name" class="admin-input" value="${item.name || ''}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Jabatan / Role</label>
+            <input type="text" id="form-pic-role" class="admin-input" value="${item.role || ''}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Nomor WhatsApp</label>
+            <input type="text" id="form-pic-phone" class="admin-input" value="${item.phone || ''}" placeholder="+62 812-xxx-xxx" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Bidang Layanan</label>
+            <textarea id="form-pic-service" class="admin-input h-24 resize-none" required>${item.service || ''}</textarea>
+          </div>
+        `;
+      } else if (type === 'users') {
+        const item = isEdit ? users.find(u => u.id === editingId) : { name: '', username: '', password: '', role: 'Operator', active: true };
+        content = `
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Nama Lengkap</label>
+            <input type="text" id="form-user-name" class="admin-input" value="${item.name || ''}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Username</label>
+            <input type="text" id="form-user-username" class="admin-input" value="${item.username || ''}" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Password ${isEdit ? '(kosongkan jika tidak diubah)' : ''}</label>
+            <input type="password" id="form-user-password" class="admin-input" placeholder="${isEdit ? 'Kosongkan jika tidak diubah' : 'Masukkan password'}" ${isEdit ? '' : 'required'}>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Role</label>
+            <select id="form-user-role" class="admin-input" required>
+              <option value="Super Admin" ${item.role === 'Super Admin' ? 'selected' : ''}>Super Admin</option>
+              <option value="Admin" ${item.role === 'Admin' ? 'selected' : ''}>Admin</option>
+              <option value="Operator" ${item.role === 'Operator' ? 'selected' : ''}>Operator</option>
+              <option value="Viewer" ${item.role === 'Viewer' ? 'selected' : ''}>Viewer</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Status Akun</label>
+            <select id="form-user-active" class="admin-input" required>
+              <option value="true" ${item.active !== false ? 'selected' : ''}>Aktif</option>
+              <option value="false" ${item.active === false ? 'selected' : ''}>Nonaktif</option>
+            </select>
+          </div>
+        `;
+      }
+
+      formBody.innerHTML = content;
+      openModal('admin-form-modal');
+    }
+
+    function handleAdminFormSubmit(e) {
+      e.preventDefault();
+      const type = appState.currentAdminTab;
+      const isEdit = editingId !== null;
+
+      if (type === 'services') {
+        const title = document.getElementById('form-service-title').value;
+        const desc = document.getElementById('form-service-desc').value;
+        const url = document.getElementById('form-service-url').value;
+        const icon = document.getElementById('form-service-icon').value;
+
+        if (isEdit) {
+          const index = services.findIndex(s => s.id === editingId);
+          services[index] = { id: editingId, title, desc, url, icon };
+        } else {
+          services.push({ id: Date.now().toString(), title, desc, url, icon });
+        }
+        saveStoredData('bkdd_services', services);
+        renderAdminServices();
+      } else if (type === 'news') {
+        const title = document.getElementById('form-news-title').value;
+        const date = document.getElementById('form-news-date').value;
+        const author = document.getElementById('form-news-author').value;
+        const image = document.getElementById('form-news-image').value;
+        const content = document.getElementById('form-news-content').value;
+
+        if (isEdit) {
+          const index = news.findIndex(n => n.id === editingId);
+          news[index] = { id: editingId, title, date, author, image, content };
+        } else {
+          news.push({ id: Date.now().toString(), title, date, author, image, content });
+        }
+        saveStoredData('bkdd_news', news);
+        renderAdminNews();
+      } else if (type === 'leaders') {
+        const name = document.getElementById('form-leader-name').value;
+        const position = document.getElementById('form-leader-position').value;
+        const nip = document.getElementById('form-leader-nip').value;
+        const photo = document.getElementById('form-leader-photo').value;
+        const contact = document.getElementById('form-leader-contact').value;
+
+        if (isEdit) {
+          const index = leaders.findIndex(l => l.id === editingId);
+          leaders[index] = { id: editingId, name, position, nip, photo, contact };
+        } else {
+          leaders.push({ id: Date.now().toString(), name, position, nip, photo, contact });
+        }
+        saveStoredData('bkdd_leaders', leaders);
+        renderAdminLeaders();
+      } else if (type === 'sops') {
+        const title = document.getElementById('form-sop-title').value;
+        const category = document.getElementById('form-sop-category').value;
+        const fileUrl = document.getElementById('form-sop-url').value;
+
+        if (isEdit) {
+          const index = sops.findIndex(s => s.id === editingId);
+          sops[index] = { id: editingId, title, category, fileUrl };
+        } else {
+          sops.push({ id: Date.now().toString(), title, category, fileUrl });
+        }
+        saveStoredData('bkdd_sops', sops);
+        renderAdminSops();
+      } else if (type === 'requirements') {
+        const title = document.getElementById('form-req-title').value;
+        const content = document.getElementById('form-req-content').value;
+
+        if (isEdit) {
+          const index = requirements.findIndex(r => r.id === editingId);
+          requirements[index] = { id: editingId, title, content };
+        } else {
+          requirements.push({ id: Date.now().toString(), title, content });
+        }
+        saveStoredData('bkdd_requirements', requirements);
+        renderAdminRequirements();
+      } else if (type === 'pic-contacts') {
+        const name = document.getElementById('form-pic-name').value.trim();
+        const role = document.getElementById('form-pic-role').value.trim();
+        const phone = document.getElementById('form-pic-phone').value.trim();
+        const service = document.getElementById('form-pic-service').value.trim();
+
+        if (isEdit) {
+          const index = picContacts.findIndex(p => p.id === editingId);
+          picContacts[index] = { id: editingId, name, role, phone, service };
+        } else {
+          picContacts.push({ id: Date.now().toString(), name, role, phone, service });
+        }
+        saveStoredData('bkdd_pic_contacts', picContacts);
+        renderAdminPicContacts();
+      } else if (type === 'users') {
+        const name = document.getElementById('form-user-name').value.trim();
+        const username = document.getElementById('form-user-username').value.trim();
+        const password = document.getElementById('form-user-password').value;
+        const role = document.getElementById('form-user-role').value;
+        const active = document.getElementById('form-user-active').value === 'true';
+
+        const duplicateUsername = users.some(user => user.username === username && user.id !== editingId);
+        if (duplicateUsername) {
+          showToast('Username sudah dipakai akun lain.', 'danger');
+          return;
+        }
+
+        const nextActiveCount = users.reduce((count, user) => {
+          if (isEdit && user.id === editingId) {
+            return count + (active ? 1 : 0);
+          }
+          return count + (user.active !== false ? 1 : 0);
+        }, 0) + (!isEdit && active ? 1 : 0);
+
+        if (nextActiveCount <= 0) {
+          showToast('Harus ada minimal satu akun aktif.', 'danger');
+          return;
+        }
+
+        if (isEdit) {
+          const index = users.findIndex(u => u.id === editingId);
+          const previous = users[index];
+          const nextPassword = password.trim() ? password : previous.password;
+          users[index] = {
+            ...previous,
+            id: editingId,
+            name,
+            username,
+            password: nextPassword,
+            role,
+            active
+          };
+
+          if (sessionStorage.getItem('bkdd_user') === previous.username) {
+            sessionStorage.setItem('bkdd_user', username);
+          }
+        } else {
+          users.push({
+            id: Date.now().toString(),
+            name,
+            username,
+            password,
+            role,
+            active,
+            lastLogin: ''
+          });
+        }
+
+        saveStoredData('bkdd_users', users);
+        syncCurrentAdminContext();
+        renderAdminUsers();
+      }
+
+      showToast(`Data berhasil ${isEdit ? 'diperbarui' : 'disimpan'}!`, 'success');
+      closeModal('admin-form-modal');
+      editingId = null;
+    }
+
+    // --- UTILITIES ---
+    function formatDateString(dateStr) {
+      if (!dateStr) return '';
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return new Date(dateStr).toLocaleDateString('id-ID', options);
+    }
+  </script>
+  <!-- Google Apps Script backend integration (Hybrid Backup) -->
+  <script>
+    (function () {
+      const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby7wtrEFwFT0Ui235x1INOh0VOEnopBz1RU39knEfY7vez5FphqL7FMmfTnNlPvldgGpA/exec";
+      const CLOUD_KEYS = ['services', 'news', 'leaders', 'sops', 'requirements', 'picContacts', 'users', 'settings'];
+      const TRUSTED_GAS_ORIGINS = {
+        'https://script.google.com': true,
+        'https://script.googleusercontent.com': true
+      };
+
+      function isPlainObject(value) {
+        return !!value && typeof value === 'object' && !Array.isArray(value);
+      }
+
+      function isValidCloudValue(key, value) {
+        if (value === undefined) {
+          return false;
+        }
+
+        if (key === 'settings') {
+          return isPlainObject(value);
+        }
+
+        return Array.isArray(value);
+      }
+
+      function extractCloudData(payload) {
+        if (!payload) {
+          return {};
+        }
+
+        const source = isPlainObject(payload.data) ? payload.data : payload;
+        if (!isPlainObject(source)) {
+          return {};
+        }
+
+        const data = {};
+        CLOUD_KEYS.forEach((key) => {
+          if (Object.prototype.hasOwnProperty.call(source, key) && isValidCloudValue(key, source[key])) {
+            data[key] = source[key];
+          }
+        });
+        return data;
+      }
+
+      function applyCloudData(cloudData) {
+        const mapping = {
+          services: ['bkdd_services', (value) => { services = value; }],
+          news: ['bkdd_news', (value) => { news = value; }],
+          leaders: ['bkdd_leaders', (value) => { leaders = value; }],
+          sops: ['bkdd_sops', (value) => { sops = value; }],
+          requirements: ['bkdd_requirements', (value) => { requirements = value; }],
+          picContacts: ['bkdd_pic_contacts', (value) => { picContacts = value; }],
+          users: ['bkdd_users', (value) => { users = value; }],
+          settings: ['bkdd_settings', (value) => { settings = value; }]
+        };
+
+        CLOUD_KEYS.forEach((key) => {
+          if (!Object.prototype.hasOwnProperty.call(cloudData, key)) {
+            return;
+          }
+
+          const entry = mapping[key];
+          if (!entry) {
+            return;
+          }
+
+          const [storageKey, assignValue] = entry;
+          const value = cloudData[key];
+          assignValue(value);
+          saveStoredData(storageKey, value);
+        });
+
+        window.dispatchEvent(new Event('cloudDataUpdated'));
+      }
+
+      function escapeForJavaScript(value) {
+        return JSON.stringify(value)
+          .replace(/</g, '\\u003c')
+          .replace(/\u2028/g, '\\u2028')
+          .replace(/\u2029/g, '\\u2029');
+      }
+
+      function makeToken(prefix) {
+        return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+      }
+
+      function loadCloudState() {
+        return new Promise((resolve, reject) => {
+          const callbackName = makeToken('bkddBootstrap');
+          const script = document.createElement('script');
+          let settled = false;
+
+          function cleanup() {
+            if (script.parentNode) {
+              script.parentNode.removeChild(script);
+            }
+
+            try {
+              delete window[callbackName];
+            } catch (err) {
+              window[callbackName] = undefined;
+            }
+          }
+
+          function finish(error, payload) {
+            if (settled) {
+              return;
+            }
+            settled = true;
+            clearTimeout(timer);
+            cleanup();
+
+            if (error) {
+              reject(error);
+              return;
+            }
+
+            resolve(payload);
+          }
+
+          const timer = setTimeout(() => {
+            finish(new Error('Waktu bootstrap dari Google Apps Script habis.'));
+          }, 15000);
+
+          window[callbackName] = function (payload) {
+            finish(null, payload);
+          };
+
+          script.onerror = function () {
+            finish(new Error('Gagal memuat data dari Google Apps Script.'));
+          };
+
+          script.async = true;
+          script.src = `${GAS_WEB_APP_URL}?action=bootstrap&callback=${encodeURIComponent(callbackName)}&_=${Date.now()}`;
+          document.head.appendChild(script);
+        }).then((payload) => {
+          if (payload && payload.success === false) {
+            throw new Error(payload.message || 'Bootstrap data dari Google Apps Script gagal.');
+          }
+
+          const cloudData = extractCloudData(payload);
+          if (Object.keys(cloudData).length > 0) {
+            window.__isCloudHydrating = true;
+            try {
+              applyCloudData(cloudData);
+            } finally {
+              window.__isCloudHydrating = false;
+            }
+          }
+        });
+      }
+
+      function waitForSyncAck(callbackId, timeoutMs) {
+        return new Promise((resolve, reject) => {
+          let settled = false;
+
+          function cleanup() {
+            window.removeEventListener('message', onMessage);
+          }
+
+          function finish(error, payload) {
+            if (settled) {
+              return;
+            }
+            settled = true;
+            clearTimeout(timer);
+            cleanup();
+
+            if (error) {
+              reject(error);
+              return;
+            }
+
+            resolve(payload);
+          }
+
+          function onMessage(event) {
+            if (!TRUSTED_GAS_ORIGINS[event.origin]) {
+              return;
+            }
+
+            const message = event.data;
+            if (!message || message.type !== 'BKDD_GAS_SYNC_RESULT' || message.callbackId !== callbackId) {
+              return;
+            }
+
+            if (message.success) {
+              finish(null, message);
+            } else {
+              finish(new Error(message.message || 'Apps Script menolak data sinkronisasi.'));
+            }
+          }
+
+          const timer = setTimeout(() => {
+            finish(new Error('Waktu sinkronisasi ke Google Apps Script habis.'));
+          }, timeoutMs || 15000);
+
+          window.addEventListener('message', onMessage);
+        });
+      }
+
+      function postSyncViaIframe(payload, callbackId) {
+        const iframeName = 'bkddGasSyncFrame';
+        let iframe = document.getElementById(iframeName);
+        if (!iframe) {
+          iframe = document.createElement('iframe');
+          iframe.id = iframeName;
+          iframe.name = iframeName;
+          iframe.style.display = 'none';
+          iframe.setAttribute('aria-hidden', 'true');
+          document.body.appendChild(iframe);
+        }
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = GAS_WEB_APP_URL;
+        form.target = iframeName;
+        form.style.display = 'none';
+
+        const payloadInput = document.createElement('input');
+        payloadInput.type = 'hidden';
+        payloadInput.name = 'payload';
+        payloadInput.value = JSON.stringify(payload);
+        form.appendChild(payloadInput);
+
+        const callbackInput = document.createElement('input');
+        callbackInput.type = 'hidden';
+        callbackInput.name = 'callbackId';
+        callbackInput.value = callbackId;
+        form.appendChild(callbackInput);
+
+        document.body.appendChild(form);
+        form.submit();
+
+        setTimeout(() => {
+          if (form.parentNode) {
+            form.parentNode.removeChild(form);
+          }
+        }, 0);
+      }
+
+      window.syncToCloud = async function syncToCloud() {
+        const callbackId = makeToken('bkddSync');
+        const payload = {
+          action: 'sync',
+          source: 'bkdd-portal',
+          callbackId: callbackId,
+          updatedAt: new Date().toISOString(),
+          data: {
+            services: services,
+            news: news,
+            leaders: leaders,
+            sops: sops,
+            requirements: requirements,
+            picContacts: picContacts,
+            users: users,
+            settings: settings
+          }
+        };
+
+        const ackPromise = waitForSyncAck(callbackId, 15000);
+        try {
+          postSyncViaIframe(payload, callbackId);
+          const result = await ackPromise;
+          window.__pendingCloudSync = false;
+          console.log('Data portal berhasil disinkronkan ke Google Apps Script.');
+          return result;
+        } catch (error) {
+          console.error('Gagal sinkronisasi ke Google Apps Script:', error);
+          if (typeof showToast === 'function') {
+            showToast('Sinkronisasi ke Google Apps Script gagal. Data tetap tersimpan lokal.', 'danger');
+          }
+          throw error;
+        }
+      };
+
+      window.__cloudBackendReady = false;
+
+      (async function bootstrapCloudBackend() {
+        try {
+          await loadCloudState();
+        } catch (error) {
+          console.warn('Bootstrap data dari Google Apps Script gagal, memakai data lokal:', error);
+        } finally {
+          window.__cloudBackendReady = true;
+          if (window.__pendingCloudSync) {
+            queueCloudSync();
+          }
+        }
+      })();
+    })();
+  </script>
+</body>
+</html>
